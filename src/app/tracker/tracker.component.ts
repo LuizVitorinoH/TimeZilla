@@ -20,6 +20,9 @@ export class TrackerComponent implements OnInit {
   activities: Activity[] = [];
   totalSpentHours: number = 0;
   editingIndex: number | null = null;
+  timerSeconds = 0;
+  timerInterval: any;
+  isRunning = false;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
@@ -145,5 +148,32 @@ export class TrackerComponent implements OnInit {
     this.editingIndex = null;
     this.form.reset();
     localStorage.clear();
+  }
+
+
+  get timerDisplay(): string {
+    const hrs = Math.floor(this.timerSeconds / 3600);
+    const mins = Math.floor((this.timerSeconds % 3600) / 60);
+    const secs = this.timerSeconds % 60;
+    return `${this.pad(hrs)}:${this.pad(mins)}:${this.pad(secs)}`;
+  }
+
+  pad(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+
+  toggleTimer() {
+    if (this.isRunning) {
+      clearInterval(this.timerInterval);
+    } else {
+      this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
+    }
+    this.isRunning = !this.isRunning;
+  }
+
+  resetTimer() {
+    clearInterval(this.timerInterval);
+    this.timerSeconds = 0;
+    this.isRunning = false;
   }
 }

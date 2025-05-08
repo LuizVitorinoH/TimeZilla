@@ -2,8 +2,25 @@
   <h1
     class="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white text-center flex items-center justify-center gap-2">
     <img src="assets/img.png" alt="Godzilla" class="w-12 h-12 rounded-full p-1 shadow-md">
-    TimeZilla
+    <span>TimeZilla</span>
   </h1>
+  <div class="flex flex-col items-center gap-2 mt-4">
+    <div class="text-3xl font-bold text-white bg-zinc-800 px-6 py-3 rounded-2xl shadow-md flex items-center gap-3">
+      ⏱️ {{ timerDisplay }}
+    </div>
+    <div class="flex gap-4">
+      <button (click)="toggleTimer()" 
+        class="px-4 py-2 rounded-xl font-bold transition text-white"
+        [ngClass]="isRunning ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-600 hover:bg-green-700'">
+        {{ isRunning ? 'Pause' : 'Play' }}
+      </button>
+      <button (click)="resetTimer()" 
+        class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold transition">
+        Reset
+      </button>
+    </div>
+  </div>
+  
 
   <form [formGroup]="form" (ngSubmit)="addActivity()" class="space-y-4">
     <div class="grid grid-cols-3 gap-4 items-end">
