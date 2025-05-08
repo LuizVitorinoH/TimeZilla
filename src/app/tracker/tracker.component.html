@@ -1,0 +1,99 @@
+<div class="max-w-2xl mx-auto p-6 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl space-y-6">
+  <h1
+    class="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white text-center flex items-center justify-center gap-2">
+    <img src="assets/img.png" alt="Godzilla" class="w-12 h-12 rounded-full p-1 shadow-md">
+    TimeZilla
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="addActivity()" class="space-y-4">
+    <div class="grid grid-cols-3 gap-4 items-end">
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Horas Meta</label>
+        <input type="text" formControlName="target" placeholder="Ex: 08:00" maxlength="5"
+          (input)="applyHourMask($event)"
+          class="w-full mt-1 rounded-xl border border-zinc-300 dark:border-zinc-700 px-4 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+      </div>
+      <button type="button" (click)="setTarget()"
+        class="h-[42px] rounded-xl bg-indigo-600 text-white px-4 font-semibold hover:bg-indigo-700 transition">Definir</button>
+    </div>
+
+    <div *ngIf="targetHours > 0" class="grid grid-cols-3 gap-4">
+      <div class="col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Descrição da Atividade</label>
+        <input type="text" formControlName="description" placeholder="e.g. Code review"
+          class="w-full mt-1 rounded-xl border border-zinc-300 dark:border-zinc-700 px-4 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white">
+      </div>
+
+      <div class="col-span-1">
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Horas Gasta</label>
+        <input type="text" formControlName="hours" placeholder="Ex: 01:30" maxlength="5" (input)="applyHourMask($event)"
+          class="w-full mt-1 rounded-xl border border-zinc-300 dark:border-zinc-700 px-4 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white">
+      </div>
+
+      <button *ngIf="editingIndex === null" type="submit"
+        class="col-span-3 rounded-xl bg-green-600 text-white py-2 font-bold hover:bg-green-700 transition">
+        Adicionar Atividade
+      </button>
+
+      <button *ngIf="editingIndex !== null" type="button" (click)="updateActivity()"
+        class="col-span-3 rounded-xl bg-yellow-600 text-white py-2 font-bold hover:bg-yellow-700 transition">
+        Atualizar Atividade
+      </button>
+    </div>
+  </form>
+
+  <div *ngIf="targetHours > 0" class="grid grid-cols-3 gap-4 text-center text-zinc-800 dark:text-zinc-100">
+    <div class="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-xl">
+      <div class="text-sm font-medium">Meta</div>
+      <div class="text-xl font-bold">{{ convertToTimeFormat(targetHours) }}</div>
+    </div>
+    <div class="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-xl">
+      <div class="text-sm font-medium">Gasto</div>
+      <div class="text-xl font-bold">{{ convertToTimeFormat(totalSpentHours) }}</div>
+    </div>
+    <div class="bg-zinc-100 dark:bg-zinc-800 p-4 rounded-xl">
+      <div class="text-sm font-medium">Restante</div>
+      <div class="text-xl font-bold" [ngClass]="{
+          'text-green-500': remainingHours() <= 0,
+          'text-yellow-400': remainingHours() > 0
+        }">
+        {{ convertToTimeFormat(remainingHours()) }}
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activities.length" class="overflow-auto">
+    <table class="min-w-full mt-4 text-sm text-zinc-800 dark:text-zinc-200">
+      <thead class="bg-zinc-200 dark:bg-zinc-700">
+        <tr>
+          <th class="px-8 py-2 text-left">Descrição</th>
+          <th class="px-4 py-2 text-left">Horas</th>
+          <th class="px-2 py-2 text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let act of activities; let i = index" class="border-b border-zinc-200 dark:border-zinc-700">
+          <td class="px-8 py-2">{{ act.description }}</td>
+          <td class="px-4 py-2">{{ convertToTimeFormat(act.hours) }}</td>
+          <td class="px-4 py-2 flex gap-2 justify-end">
+            <button (click)="editActivity(i)"
+              class="flex items-center gap-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold py-1 px-3 rounded-xl transition">
+              ✏️ Editar
+            </button>
+            <button (click)="removeActivity(i)"
+              class="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold py-1 px-3 rounded-xl transition">
+              🗑️ Remover
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="flex justify-end mt-6 pr-4">
+    <button (click)="clearAll()"
+      class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-xl transition flex items-center gap-2 shadow-md">
+      🧹 Limpar Tudo
+    </button>
+  </div>
+</div>
