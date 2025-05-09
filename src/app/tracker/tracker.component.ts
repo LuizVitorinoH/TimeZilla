@@ -110,7 +110,7 @@ export class TrackerComponent implements OnInit {
     const activity = this.activities[index];
     this.form.patchValue({
       description: activity.description,
-      hours: activity.hours
+      hours: this.convertToTimeFormat(activity.hours)
     });
     this.editingIndex = index;
   }
